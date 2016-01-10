@@ -1,0 +1,7 @@
+## object files
+*.o
+*.so
+*.rds
+*~
+src-i386/
+src-x64/
