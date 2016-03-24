@@ -2,9 +2,8 @@
 #'
 #' @title wkm
 #' @param times a vector of evaluation times
-#' @param data data frame containing the variables in formula
+#' @param data data frame containing the variables in formula (if is.null(formula) expected column names are: Y (time), D (status), W (strat. factor), V (left-truncation times))
 #' @param param list of parameters containing:
-#' start: time of interim analysis (estimation of response rates is based only on data accruing after time 'start'), only if recruitment times are supplied (vector R in data) (default=0)
 #' alpha: fractional parameter (default=1)
 #' var: if TRUE (default) calculate variance estimate
 #' cov: if FALSE (default) do not calculate covariance matrix estimate
@@ -20,11 +19,10 @@
 #' calendar time \code{start} only.
 #' @references S.~Murray and A.~A. Tsiatis. Nonparametric survival estimation using prognostic longitudinal covariates. \emph{Biometrics}, 52(1):137--151, Mar. 1996.
 #' @export
-wkm <- function(times, data, param=list(start=0, alpha=1, var=TRUE, cov=FALSE, left.limit=FALSE), formula=NULL) {
+wkm <- function(times, data, param=list(alpha=1, var=TRUE, cov=FALSE, left.limit=FALSE), formula=NULL) {
 
-    if(is.null(param)) param <- list(start=0, alpha=1, var=TRUE, cov=FALSE, left.limit=FALSE)
+    if(is.null(param)) param <- list(alpha=1, var=TRUE, cov=FALSE, left.limit=FALSE)
     else {
-        start <- param$start
         alpha <- param$alpha    
         var <- param$var
         cov  <- param$cov   
@@ -33,7 +31,7 @@ wkm <- function(times, data, param=list(start=0, alpha=1, var=TRUE, cov=FALSE, l
     
     if(!is.null(formula)) data <- parseFormula(formula, data, one.sample=TRUE)
     ## if is.null(formula) assume that the variables in data are named V,Y,D,W
-
+    
     strata <- levels(factor(data$W))
     n.strata <- length(strata)
 
@@ -60,12 +58,14 @@ wkm <- function(times, data, param=list(start=0, alpha=1, var=TRUE, cov=FALSE, l
         logCOV <- NULL
     }
 
-    ## second stage data (if start=0, then data2 == data)
-    if(!is.null(data$R)) data2 <- data[data$R >= start, ]
-    else data2 <- data
-
     ## set left-truncation times to 0 if not supplied by user
-    if(is.null(data$V)) data$V <- rep.int(0, n)
+    if(is.null(data$V)) {
+        data$V <- rep.int(0, n)
+        data2 <- data
+    } else {
+        ## second stage data (V == 0 => recruited after last interim analysis)
+        data2 <- data[data$V == 0, ]
+    }
     
     for(s in 1:n.strata) {
         s.data <- data[data$W == strata[s], ]
@@ -139,7 +139,7 @@ wkm <- function(times, data, param=list(start=0, alpha=1, var=TRUE, cov=FALSE, l
         logV <- Sa.log^2 * V
     }
 
-    obj <- list(times=times, alpha=alpha, start=start, p=P, S=S^alpha, COV=COV, logCOV=logCOV, logV=logV, V=V, n.atrisk=n.atrisk)
+    obj <- list(times=times, alpha=alpha, p=P, S=S^alpha, COV=COV, logCOV=logCOV, logV=logV, V=V, n.atrisk=n.atrisk)
     class(obj) <- "wkm"
     obj
 }

@@ -36,12 +36,12 @@ rmeanDiff <- function(L, formula, data) {
     
     n <- c(nrow(data1), nrow(data2))
 
-    param <- list(alpha=1, start=0, var=TRUE, cov=FALSE, left.limit=FALSE)
+    param <- list(alpha=1, var=TRUE, cov=TRUE, left.limit=FALSE)
 
     fit1 <- wkm(times, data1, param)
     fit2 <- wkm(times, data2, param)
 
-    rmeanDiffFit(L, times, fit1, fit2, n, n/sum(n), TRUE)    
+    rmeanDiffFit(L, times, fit1, fit2, n, n/sum(n), FALSE)    
 }
                       
 #' Estimate difference of restricted mean survival (based on ahr object as returned by ahr)
@@ -88,12 +88,12 @@ rmeanDiffFit <- function(L, times, fit1, fit2, n, p, log.iis) {
     
     if((!is.null(fit1$COV) && !is.null(fit2$COV)) || log.iis) {
         if(log.iis) {
-            v1 <- fit1$V / p[1]
-            v2 <- fit2$V / p[2]
+             v1 <- fit1$V / p[1]
+             v2 <- fit2$V / p[2]
             
-            ##tmp <- simplify2array(lapply(snt, function(l) stepIntegrate(v1[pmin(snt, l)] + v2[pmin(snt, l)], times)))
-            tmp1 <- simplify2array(lapply(snt, function(l) stepIntegrate(v1[pmin(snt, l)], times)))
-            tmp2 <- simplify2array(lapply(snt, function(l) stepIntegrate(v2[pmin(snt, l)], times)))
+             ##tmp <- simplify2array(lapply(snt, function(l) stepIntegrate(v1[pmin(snt, l)] + v2[pmin(snt, l)], times)))
+             tmp1 <- simplify2array(lapply(snt, function(l) stepIntegrate(v1[pmin(snt, l)], times)))
+             tmp2 <- simplify2array(lapply(snt, function(l) stepIntegrate(v2[pmin(snt, l)], times)))
         } else {
               rho1 <- fit1$COV / p[1]
               rho2 <- fit2$COV / p[2]
@@ -101,11 +101,11 @@ rmeanDiffFit <- function(L, times, fit1, fit2, n, p, log.iis) {
               ##tmp <- simplify2array(lapply(snt, function(l) stepIntegrate(rho1[,l] + rho2[,l], times)))
               tmp1 <- simplify2array(lapply(snt, function(l) stepIntegrate(rho1[,l], times)))
               tmp2 <- simplify2array(lapply(snt, function(l) stepIntegrate(rho2[,l], times)))
-          }
+
+        }
         
-        ##var.rmean.diff <- stepIntegrate(tmp, times) / sqrt(sum(n))
-        var.rmean1 <- stepIntegrate(tmp1, times) / sqrt(sum(n))
-        var.rmean2 <- stepIntegrate(tmp2, times) / sqrt(sum(n))
+        var.rmean1 <- stepIntegrate(tmp1, times) / sum(n) ## / n1
+        var.rmean2 <- stepIntegrate(tmp2, times) / sum(n) ## / n2
         var.rmean.diff <- var.rmean1 + var.rmean2
         
         ## standardized difference
