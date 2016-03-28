@@ -1,3 +1,0 @@
-library(testthat)
-
-context("fastkm")
