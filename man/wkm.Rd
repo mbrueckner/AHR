@@ -33,8 +33,7 @@ The survival probabilities are evaluated at each entry in the vector \code{times
 the variables \code{V} (left-truncation time), \code{Y} (censored failure time), \code{D} (censoring indicator), \code{W} (stratification variable) and optionally \code{R} (recruitment time).
 If \code{var} is \code{TRUE} then an estimate of the asmyptotic variance is calculated for each entry in vector \code{times}. If \code{cov} is \code{TRUE} then the \code{n x n} asymptotic
 covariance matrix is estimated, where \code{n} is the length of vector \code{times}. If \code{left.limit} is \code{TRUE} then a left-continuous estimate of the survival function is calculated instead
-of a right-continuous estimate (default). If recruitment times are supplied in \code{data} as a variable named \code{R} then the weights are estimated using observations from patients recruited after
-calendar time \code{start} only.
+of a right-continuous estimate (default). If a vector of row indices \code{rr.subset} is supplied, then only those observations are used to estimate the response rates.
 }
 \references{
 S.~Murray and A.~A. Tsiatis. Nonparametric survival estimation using prognostic longitudinal covariates. \emph{Biometrics}, 52(1):137--151, Mar. 1996.

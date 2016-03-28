@@ -1,5 +1,5 @@
 dispStat <- function(x, tau, data, surv.fit.fun, surv.fit.param) {
-    tmp <- surv.fit.fun(x, data, surv.fit.param) ##wkm(times=x, data=data, list(start=start, cov=FALSE, alpha=1, left.limit=FALSE), formula=NULL)
+    tmp <- surv.fit.fun(x, data, surv.fit.param)
     mapply(function(a, b) (a - (1 - tau))^2 / b, tmp$S, tmp$V / nrow(data), USE.NAMES=FALSE)
 }
 
@@ -26,7 +26,7 @@ wkmQuantile <- function(tau, formula, data, conf.level=0.95, null.value=NULL, rr
     if(!is.null(formula)) data <- parseFormula(formula, data, one.sample=TRUE)
     ## if is.null(formula) is TRUE assume that the variables in data are named V,Y,D,W
     
-    fitQuantile(tau, data, conf.level, null.value, "wkm", list(start=start, var=TRUE, cov=FALSE, alpha=1, left.limit=FALSE, rr.subset=rr.subset))
+    fitQuantile(tau, data, conf.level, null.value, "wkm", list(var=TRUE, cov=FALSE, alpha=1, left.limit=FALSE, rr.subset=rr.subset))
 }
 
 fitQuantile <- function(tau, data, conf.level=0.95, null.value=NULL, method="wkm", surv.fit.param=list(cov=FALSE, alpha=1, left.limit=FALSE, rr.subset=NULL)) {
