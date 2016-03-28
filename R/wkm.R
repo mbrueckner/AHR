@@ -8,6 +8,7 @@
 #' var: if TRUE (default) calculate variance estimate
 #' cov: if FALSE (default) do not calculate covariance matrix estimate
 #' left.limit: if TRUE calculate left-continuous estimates, else calculate right-continuous estimates
+#' rr.subset vector of row indices defining subset of observations to use for response rate estimation (default: NULL, use all observations)
 #' @param formula an object of class '"formula"' specifying the conditional survival model (only discrete covariates supported)
 #' @return an object of class '"wkm"'
 #' @details This function calculates the weighted Kaplan-Meier estimator for the survival function with weights based on a discrete time-independent covariate as described in Murray/Tsiatis (1996).
@@ -19,15 +20,15 @@
 #' calendar time \code{start} only.
 #' @references S.~Murray and A.~A. Tsiatis. Nonparametric survival estimation using prognostic longitudinal covariates. \emph{Biometrics}, 52(1):137--151, Mar. 1996.
 #' @export
-wkm <- function(times, data, param=list(alpha=1, var=TRUE, cov=FALSE, left.limit=FALSE), formula=NULL) {
+wkm <- function(times, data, param=list(alpha=1, var=TRUE, cov=FALSE, left.limit=FALSE, rr.subset=NULL), formula=NULL) {
 
-    if(is.null(param)) param <- list(alpha=1, var=TRUE, cov=FALSE, left.limit=FALSE)
-    else {
-        alpha <- param$alpha    
-        var <- param$var
-        cov  <- param$cov   
-        left.limit <- param$left.limit
-    }
+    if(is.null(param)) param <- list(alpha=1, var=TRUE, cov=FALSE, left.limit=FALSE, rr.subset=NULL)
+
+    alpha <- param$alpha    
+    var <- param$var
+    cov  <- param$cov   
+    left.limit <- param$left.limit
+    rr.subset <- param$rr.subset    
     
     if(!is.null(formula)) data <- parseFormula(formula, data, one.sample=TRUE)
     ## if is.null(formula) assume that the variables in data are named V,Y,D,W
@@ -59,13 +60,11 @@ wkm <- function(times, data, param=list(alpha=1, var=TRUE, cov=FALSE, left.limit
     }
 
     ## set left-truncation times to 0 if not supplied by user
-    if(is.null(data$V)) {
-        data$V <- rep.int(0, n)
-        data2 <- data
-    } else {
-        ## second stage data (V == 0 => recruited after last interim analysis)
-        data2 <- data[data$V == 0, ]
-    }
+    if(is.null(data$V)) data$V <- rep.int(0, n)
+
+    ## estimate response rates only from subset
+    if(!is.null(param$rr.subset)) data2 <- data[rr.subset, ]
+    else data2 <- data
     
     for(s in 1:n.strata) {
         s.data <- data[data$W == strata[s], ]
@@ -84,9 +83,9 @@ wkm <- function(times, data, param=list(alpha=1, var=TRUE, cov=FALSE, left.limit
         P[s] <- p
         
         fs <- fit$surv
-        tfs <- p * fs
+        pfs <- p * fs
 
-        S <- S + tfs
+        S <- S + pfs
         
         ## fit$variance (Greenwood) is variance of -log(\hat{S}), but we need variance of -\sqrt{ns}log(\hat{S})
         fvar <- fit$variance * nrow(s.data)
@@ -99,11 +98,11 @@ wkm <- function(times, data, param=list(alpha=1, var=TRUE, cov=FALSE, left.limit
 
             dfs <- diag(fs)
             
-            COV <- COV + p * dfs %*% v %*% dfs + tfs %*% t(fs)            
+            COV <- COV + p * dfs %*% v %*% dfs + pfs %*% t(fs)            
         }
         
         if(var) { ## calculate variance
-            V <- V + tfs * fs * (1 + fvar)
+            V <- V + pfs * fs * (1 + fvar)
         }
     }
 
@@ -144,6 +143,24 @@ wkm <- function(times, data, param=list(alpha=1, var=TRUE, cov=FALSE, left.limit
     obj
 }
 
+## calculate diag(x) %*% A %*% diag(x)
+matrixProd <- function(A, x) sweep(sweep(A, MARGIN=2, STATS=x, FUN="*"), MARGIN=1, STATS=x, FUN="*")
+
+## same as matrix(x, nrow=length(x), ncol=length(x), byrow=FALSE)
+vectorToMatrixByCol <- function(x) {
+    n <- length(x)
+    dim(x) <- c(n, 1)
+    x[, rep.int(1, n)]
+}
+
+##v <- matrix(fvar, nrow=n.times, ncol=n.times, byrow=FALSE)
+
+f <- function(fvar, n.times) {
+    v <- fvar
+    dim(v) <- c(n.times, 1)
+    v <- v[, rep.int(1, n.times)]
+}
+            
 
 ################################################
 ### WKM with time-dependent discrete covariate

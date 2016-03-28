@@ -4,7 +4,7 @@
 \alias{rmeanDiff}
 \title{rmeanDiff}
 \usage{
-rmeanDiff(L, formula, data)
+rmeanDiff(L, formula, data, rr.subset = NULL)
 }
 \arguments{
 \item{L}{time-limit specifying up to which time restricted mean will be calculated}
@@ -12,6 +12,8 @@ rmeanDiff(L, formula, data)
 \item{formula}{an object of class '"formula"' specifying the conditional survival model}
 
 \item{data}{data frame containing the variables in formula}
+
+\item{rr.subset}{vector of row indices defining subset of observations to use for response rate estimation (default: NULL, use all observations)}
 }
 \value{
 An object of class '"rmd"', i.e. a list containing:

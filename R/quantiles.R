@@ -11,7 +11,7 @@ dispStat <- function(x, tau, data, surv.fit.fun, surv.fit.param) {
 #' @param data data frame containing the variables in formula
 #' @param conf.level confidence level (or NULL if no confidence interval should be calculated)
 #' @param null.value true value of quantile or NULL if no p-value should be calculated
-#' @param start time of interim analysis (estimation of response rates is based only on data accruing after time 'start')
+#' @param rr.subset vector of row indices defining subset of observations to use for response rate estimation (default: NULL, use all observations)
 #' @return An object of class '"survQuantile"'
 #' @references brookmeyer_confidence_1982
 #' @export
@@ -22,14 +22,14 @@ dispStat <- function(x, tau, data, surv.fit.fun, surv.fit.param) {
 #' D <- T <= C
 #' Z <- rep(c(0,1), c(100, 100))
 #' wkmQuantile(0.5, Surv(Y, D) ~ strata(Z), data.frame(Y=Y, D=D, Z=Z))
-wkmQuantile <- function(tau, formula, data, conf.level=0.95, null.value=NULL, start=0) {
+wkmQuantile <- function(tau, formula, data, conf.level=0.95, null.value=NULL, rr.subset=NULL) {
     if(!is.null(formula)) data <- parseFormula(formula, data, one.sample=TRUE)
     ## if is.null(formula) is TRUE assume that the variables in data are named V,Y,D,W
     
-    fitQuantile(tau, data, conf.level, null.value, "wkm", list(start=start, var=TRUE, cov=FALSE, alpha=1, left.limit=FALSE))
+    fitQuantile(tau, data, conf.level, null.value, "wkm", list(start=start, var=TRUE, cov=FALSE, alpha=1, left.limit=FALSE, rr.subset=rr.subset))
 }
 
-fitQuantile <- function(tau, data, conf.level=0.95, null.value=NULL, method="wkm", surv.fit.param=list(start=0, cov=FALSE, alpha=1, left.limit=FALSE)) {
+fitQuantile <- function(tau, data, conf.level=0.95, null.value=NULL, method="wkm", surv.fit.param=list(cov=FALSE, alpha=1, left.limit=FALSE, rr.subset=NULL)) {
     if(tau < 0 || tau > 1) stop("tau outside [0,1]")
 
     obj <- list()
@@ -114,10 +114,10 @@ wkmCompareQuantiles <- function(tau, formula, data, conf.level=0.95, null.value=
     if(!is.null(formula)) data <- parseFormula(formula, data)
     ## if is.null(formula) is TRUE assume that the variables in data are named V,Y,D,W,Trt
 
-    fitCompareQuantiles(tau, data, conf.level, null.value, method, p.value, "wkm", list(start=0, var=TRUE, cov=FALSE, alpha=1, left.limit=FALSE))
+    fitCompareQuantiles(tau, data, conf.level, null.value, method, p.value, "wkm", list(var=TRUE, cov=FALSE, alpha=1, left.limit=FALSE, rr.subset=NULL))
 }
 
-fitCompareQuantiles <- function(tau, data, conf.level=0.95, null.value=1, method="ratio", p.value=FALSE, surv.fit.fun="wkm", surv.fit.param=list(start=0, cov=FALSE, alpha=1, left.limit=FALSE)) {    
+fitCompareQuantiles <- function(tau, data, conf.level=0.95, null.value=1, method="ratio", p.value=FALSE, surv.fit.fun="wkm", surv.fit.param=list(rr.subset=NULL, cov=FALSE, alpha=1, left.limit=FALSE)) {    
     grps <- levels(data$Trt)
     if(length(grps) != 2) stop("Need exactly two groups!")
     

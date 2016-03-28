@@ -5,7 +5,7 @@
 \title{wkmQuantile}
 \usage{
 wkmQuantile(tau, formula, data, conf.level = 0.95, null.value = NULL,
-  start = 0)
+  rr.subset = NULL)
 }
 \arguments{
 \item{tau}{number between 0 and 1 specifiying the quantile to estimate}
@@ -18,7 +18,7 @@ wkmQuantile(tau, formula, data, conf.level = 0.95, null.value = NULL,
 
 \item{null.value}{true value of quantile or NULL if no p-value should be calculated}
 
-\item{start}{time of interim analysis (estimation of response rates is based only on data accruing after time 'start')}
+\item{rr.subset}{vector of row indices defining subset of observations to use for response rate estimation (default: NULL, use all observations)}
 }
 \value{
 An object of class '"survQuantile"'

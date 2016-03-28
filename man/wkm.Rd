@@ -5,19 +5,19 @@
 \title{wkm}
 \usage{
 wkm(times, data, param = list(alpha = 1, var = TRUE, cov = FALSE, left.limit =
-  FALSE), formula = NULL)
+  FALSE, rr.subset = NULL), formula = NULL)
 }
 \arguments{
 \item{times}{a vector of evaluation times}
 
-\item{data}{data frame containing the variables in formula}
+\item{data}{data frame containing the variables in formula (if is.null(formula) expected column names are: Y (time), D (status), W (strat. factor), V (left-truncation times))}
 
 \item{param}{list of parameters containing:
-start: time of interim analysis (estimation of response rates is based only on data accruing after time 'start'), only if recruitment times are supplied (vector R in data) (default=0)
 alpha: fractional parameter (default=1)
 var: if TRUE (default) calculate variance estimate
 cov: if FALSE (default) do not calculate covariance matrix estimate
-left.limit: if TRUE calculate left-continuous estimates, else calculate right-continuous estimates}
+left.limit: if TRUE calculate left-continuous estimates, else calculate right-continuous estimates
+rr.subset vector of row indices defining subset of observations to use for response rate estimation (default: NULL, use all observations)}
 
 \item{formula}{an object of class '"formula"' specifying the conditional survival model (only discrete covariates supported)}
 }

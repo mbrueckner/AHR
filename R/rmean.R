@@ -5,6 +5,7 @@
 #' @param L time-limit specifying up to which time restricted mean will be calculated
 #' @param formula an object of class '"formula"' specifying the conditional survival model
 #' @param data data frame containing the variables in formula
+#' @param rr.subset vector of row indices defining subset of observations to use for response rate estimation (default: NULL, use all observations)
 #' @return An object of class '"rmd"', i.e. a list containing:
 #'  \item{L}{time limit, i.e. restricted mean up to time L is calculated}
 #'  \item{rmean1}{restricted mean in group 1}
@@ -23,7 +24,7 @@
 #' D <- T <= C
 #' Z <- rep(c(0,1), c(100, 100))
 #' fit <- rmeanDiff(2, formula=Surv(Y, D) ~ Z, data.frame(Y=Y, D=D, Z=Z))
-rmeanDiff <- function(L, formula, data) {        
+rmeanDiff <- function(L, formula, data, rr.subset=NULL) {        
     if(!is.null(formula)) data <- parseFormula(formula, data)
     
     grps <- levels(data$Trt)
@@ -36,7 +37,7 @@ rmeanDiff <- function(L, formula, data) {
     
     n <- c(nrow(data1), nrow(data2))
 
-    param <- list(alpha=1, var=TRUE, cov=TRUE, left.limit=FALSE)
+    param <- list(alpha=1, var=TRUE, cov=TRUE, left.limit=FALSE, rr.subset=rr.subset)
 
     fit1 <- wkm(times, data1, param)
     fit2 <- wkm(times, data2, param)
