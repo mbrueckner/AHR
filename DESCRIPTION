@@ -2,7 +2,7 @@ Package: AHR
 Type: Package
 Title: Estimation and Testing of Average Hazard Ratios
 Version: 1.4
-Date: 2016-03-23
+Date: 2016-03-27
 Author: Matthias Brueckner <mwb@math.uni-bremen.de>
 Maintainer: Matthias Brueckner <mwb@math.uni-bremen.de>
 Description: Methods for estimation of multivariate average hazard ratios as
