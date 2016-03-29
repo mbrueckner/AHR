@@ -5,7 +5,7 @@
 \title{wkm}
 \usage{
 wkm(times, data, param = list(alpha = 1, var = TRUE, cov = FALSE, left.limit =
-  FALSE, rr.subset = 1:nrow(data)), formula = NULL)
+  FALSE, rr.subset = rep(TRUE, nrow(data))), formula = NULL)
 }
 \arguments{
 \item{times}{a vector of evaluation times}
