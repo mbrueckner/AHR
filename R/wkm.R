@@ -19,9 +19,9 @@
 #' of a right-continuous estimate (default). If a logical vector \code{rr.subset} is supplied, then only a subset of observations is used to estimate the response rates.
 #' @references S.~Murray and A.~A. Tsiatis. Nonparametric survival estimation using prognostic longitudinal covariates. \emph{Biometrics}, 52(1):137--151, Mar. 1996.
 #' @export
-wkm <- function(times, data, param=list(alpha=1, var=TRUE, cov=FALSE, left.limit=FALSE, rr.subset=1:nrow(data)), formula=NULL) {
+wkm <- function(times, data, param=list(alpha=1, var=TRUE, cov=FALSE, left.limit=FALSE, rr.subset=rep(TRUE, nrow(data)), formula=NULL) {
 
-    if(is.null(param)) param <- list(alpha=1, var=TRUE, cov=FALSE, left.limit=FALSE, rr.subset=1:nrow(data))
+    if(is.null(param)) param <- list(alpha=1, var=TRUE, cov=FALSE, left.limit=FALSE, rr.subset=rep(TRUE, nrow(data)))
 
     alpha <- param$alpha    
     var <- param$var
