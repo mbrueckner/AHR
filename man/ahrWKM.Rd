@@ -6,7 +6,7 @@
 \usage{
 ahrWKM(L, formula, data, null.theta = NULL, contrast = NULL,
   multi.test = FALSE, cov = TRUE, bootstrap = 0, alpha = 1,
-  left.limit = FALSE, rr.subset = NULL)
+  left.limit = FALSE, rr.subset = rep(TRUE, nrow(data)))
 }
 \arguments{
 \item{L}{time-limit specifying time-interval [0,L] over which average hazard ratios will be calculated}
@@ -29,7 +29,7 @@ ahrWKM(L, formula, data, null.theta = NULL, contrast = NULL,
 
 \item{left.limit}{if TRUE use left-continuous interpolation of WKM estimates instead of right-continuous interpolation}
 
-\item{rr.subset}{vector of row indices defining subset of observations to use for response rate estimation (default: NULL, use all observations)}
+\item{rr.subset}{logical vector defining subset of observations to use for response rate estimation (default: use all observations)}
 }
 \value{
 An object of class '"ahr"'

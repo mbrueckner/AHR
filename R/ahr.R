@@ -37,7 +37,7 @@ avgHR <- function(L, data, method="km", ...) {
 #' @param bootstrap if > 0 then use bootstrap to estimate covariance matrix (ignore if cov is TRUE)
 #' @param alpha exponent of the weight function
 #' @param left.limit if TRUE use left-continuous interpolation of WKM estimates instead of right-continuous interpolation
-#' @param rr.subset vector of row indices defining subset of observations to use for response rate estimation (default: NULL, use all observations)
+#' @param rr.subset logical vector defining subset of observations to use for response rate estimation (default: use all observations)
 #' @return An object of class '"ahr"'
 #' @references J.~D. Kalbfleisch and R.~L. Prentice. Estimation of the average hazard ratio. \emph{Biometrika}, 68(1):105--112, Apr. 1981.
 #' @export
@@ -55,7 +55,7 @@ avgHR <- function(L, data, method="km", ...) {
 #' \dontrun{fitBS <- ahrWKM(2, Surv(Y, D) ~ Z, data.frame(Y=Y, D=D, Z=Z), cov=FALSE,
 #'                          bootstrap=1000)}
 #' 
-ahrWKM <- function(L, formula, data, null.theta=NULL, contrast=NULL, multi.test=FALSE, cov=TRUE, bootstrap=0, alpha=1, left.limit=FALSE, rr.subset=NULL) {
+ahrWKM <- function(L, formula, data, null.theta=NULL, contrast=NULL, multi.test=FALSE, cov=TRUE, bootstrap=0, alpha=1, left.limit=FALSE, rr.subset=rep(TRUE, nrow(data))) {
     if(!is.null(formula)) data <- parseFormula(formula, data)
     
     wkm.param <- list(alpha=alpha, var=cov, cov=cov, left.limit=left.limit, rr.subset=rr.subset)
@@ -97,7 +97,7 @@ ahrWKM <- function(L, formula, data, null.theta=NULL, contrast=NULL, multi.test=
 ahrKM <- function(L, formula, data, null.theta=NULL, contrast=NULL, multi.test=FALSE, cov=TRUE, bootstrap=0, left.limit=FALSE) {
     if(!is.null(formula)) data <- parseFormula(formula, data)
     
-    wkm.param <- list(alpha=1, var=cov, cov=FALSE, left.limit=left.limit, rr.subset=NULL)
+    wkm.param <- list(alpha=1, var=cov, cov=FALSE, left.limit=left.limit, rr.subset=rep(TRUE, nrow(data)))
     
     fit <- ahrSurv(L, data, null.theta, contrast, multi.test, cov, bootstrap, wkm, wkm.param, TRUE)
     fit <- c(fit, logHR(fit))
@@ -310,11 +310,17 @@ ahrFit <- function(data, L, cov, surv.fit.fun, surv.fit.param, log.iis=FALSE) {
     n <- NULL
     fit <- list()
 
+    trt.sub <- data$Trt[surv.fit.param$rr.subset]
+    
     ## estimate transition probabilities in each treatment group
     for(i in grps) {
         cur.data <- data[data$Trt == i,]
+
+        par <- surv.fit.param
+        par$rr.subset <- surv.fit.param$rr.subset[trt.sub == i]
+        
         n <- c(n, nrow(cur.data))
-        fit[[length(fit)+1]] <- surv.fit.fun(times, cur.data, surv.fit.param)
+        fit[[length(fit)+1]] <- surv.fit.fun(times, cur.data, par)
     }
 
     p <- n / sum(n)

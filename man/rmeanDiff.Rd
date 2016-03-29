@@ -4,7 +4,7 @@
 \alias{rmeanDiff}
 \title{rmeanDiff}
 \usage{
-rmeanDiff(L, formula, data, rr.subset = NULL)
+rmeanDiff(L, formula, data, rr.subset = rep(TRUE, nrow(data)))
 }
 \arguments{
 \item{L}{time-limit specifying up to which time restricted mean will be calculated}
@@ -13,7 +13,7 @@ rmeanDiff(L, formula, data, rr.subset = NULL)
 
 \item{data}{data frame containing the variables in formula}
 
-\item{rr.subset}{vector of row indices defining subset of observations to use for response rate estimation (default: NULL, use all observations)}
+\item{rr.subset}{logical vector defining subset of observations to use for response rate estimation (default: use all observations)}
 }
 \value{
 An object of class '"rmd"', i.e. a list containing:

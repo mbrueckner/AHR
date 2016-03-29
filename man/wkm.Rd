@@ -5,7 +5,7 @@
 \title{wkm}
 \usage{
 wkm(times, data, param = list(alpha = 1, var = TRUE, cov = FALSE, left.limit =
-  FALSE, rr.subset = NULL), formula = NULL)
+  FALSE, rr.subset = 1:nrow(data)), formula = NULL)
 }
 \arguments{
 \item{times}{a vector of evaluation times}
@@ -17,7 +17,7 @@ alpha: fractional parameter (default=1)
 var: if TRUE (default) calculate variance estimate
 cov: if FALSE (default) do not calculate covariance matrix estimate
 left.limit: if TRUE calculate left-continuous estimates, else calculate right-continuous estimates
-rr.subset vector of row indices defining subset of observations to use for response rate estimation (default: NULL, use all observations)}
+rr.subset: logical vector defining subset of observations to use for response rate estimation (default: use all observations)}
 
 \item{formula}{an object of class '"formula"' specifying the conditional survival model (only discrete covariates supported)}
 }
@@ -33,7 +33,7 @@ The survival probabilities are evaluated at each entry in the vector \code{times
 the variables \code{V} (left-truncation time), \code{Y} (censored failure time), \code{D} (censoring indicator), \code{W} (stratification variable) and optionally \code{R} (recruitment time).
 If \code{var} is \code{TRUE} then an estimate of the asmyptotic variance is calculated for each entry in vector \code{times}. If \code{cov} is \code{TRUE} then the \code{n x n} asymptotic
 covariance matrix is estimated, where \code{n} is the length of vector \code{times}. If \code{left.limit} is \code{TRUE} then a left-continuous estimate of the survival function is calculated instead
-of a right-continuous estimate (default). If a vector of row indices \code{rr.subset} is supplied, then only those observations are used to estimate the response rates.
+of a right-continuous estimate (default). If a logical vector \code{rr.subset} is supplied, then only a subset of observations is used to estimate the response rates.
 }
 \references{
 S.~Murray and A.~A. Tsiatis. Nonparametric survival estimation using prognostic longitudinal covariates. \emph{Biometrics}, 52(1):137--151, Mar. 1996.

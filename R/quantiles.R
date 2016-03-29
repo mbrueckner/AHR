@@ -11,7 +11,7 @@ dispStat <- function(x, tau, data, surv.fit.fun, surv.fit.param) {
 #' @param data data frame containing the variables in formula
 #' @param conf.level confidence level (or NULL if no confidence interval should be calculated)
 #' @param null.value true value of quantile or NULL if no p-value should be calculated
-#' @param rr.subset vector of row indices defining subset of observations to use for response rate estimation (default: NULL, use all observations)
+#' @param rr.subset logical vector defining subset of observations to use for response rate estimation (default: use all observations)
 #' @return An object of class '"survQuantile"'
 #' @references brookmeyer_confidence_1982
 #' @export
@@ -22,14 +22,14 @@ dispStat <- function(x, tau, data, surv.fit.fun, surv.fit.param) {
 #' D <- T <= C
 #' Z <- rep(c(0,1), c(100, 100))
 #' wkmQuantile(0.5, Surv(Y, D) ~ strata(Z), data.frame(Y=Y, D=D, Z=Z))
-wkmQuantile <- function(tau, formula, data, conf.level=0.95, null.value=NULL, rr.subset=NULL) {
+wkmQuantile <- function(tau, formula, data, conf.level=0.95, null.value=NULL, rr.subset=rep(TRUE, nrow(data))) {
     if(!is.null(formula)) data <- parseFormula(formula, data, one.sample=TRUE)
     ## if is.null(formula) is TRUE assume that the variables in data are named V,Y,D,W
     
     fitQuantile(tau, data, conf.level, null.value, "wkm", list(var=TRUE, cov=FALSE, alpha=1, left.limit=FALSE, rr.subset=rr.subset))
 }
 
-fitQuantile <- function(tau, data, conf.level=0.95, null.value=NULL, method="wkm", surv.fit.param=list(cov=FALSE, alpha=1, left.limit=FALSE, rr.subset=NULL)) {
+fitQuantile <- function(tau, data, conf.level=0.95, null.value=NULL, method="wkm", surv.fit.param=list(cov=FALSE, alpha=1, left.limit=FALSE, rr.subset=rep(TRUE, nrow(data)))) {
     if(tau < 0 || tau > 1) stop("tau outside [0,1]")
 
     obj <- list()
@@ -114,18 +114,26 @@ wkmCompareQuantiles <- function(tau, formula, data, conf.level=0.95, null.value=
     if(!is.null(formula)) data <- parseFormula(formula, data)
     ## if is.null(formula) is TRUE assume that the variables in data are named V,Y,D,W,Trt
 
-    fitCompareQuantiles(tau, data, conf.level, null.value, method, p.value, "wkm", list(var=TRUE, cov=FALSE, alpha=1, left.limit=FALSE, rr.subset=NULL))
+    fitCompareQuantiles(tau, data, conf.level, null.value, method, p.value, "wkm", list(var=TRUE, cov=FALSE, alpha=1, left.limit=FALSE, rr.subset=rep(TRUE, nrow(data))))
 }
 
-fitCompareQuantiles <- function(tau, data, conf.level=0.95, null.value=1, method="ratio", p.value=FALSE, surv.fit.fun="wkm", surv.fit.param=list(rr.subset=NULL, cov=FALSE, alpha=1, left.limit=FALSE)) {    
+fitCompareQuantiles <- function(tau, data, conf.level=0.95, null.value=1, method="ratio", p.value=FALSE, surv.fit.fun="wkm", surv.fit.param=list(rr.subset=rep(TRUE, nrow(data)), cov=FALSE, alpha=1, left.limit=FALSE)) {    
     grps <- levels(data$Trt)
     if(length(grps) != 2) stop("Need exactly two groups!")
     
     data1 <- data[data$Trt == grps[1], ]
     data2 <- data[data$Trt == grps[2], ]
 
-    tau1 <- fitQuantile(tau=tau, data=data1, conf.level=conf.level, null.value=NULL, method=surv.fit.fun, surv.fit.param=surv.fit.param)
-    tau2 <- fitQuantile(tau=tau, data=data2, conf.level=conf.level, null.value=NULL, method=surv.fit.fun, surv.fit.param=surv.fit.param)
+    trt.sub <- data$Trt[surv.fit.param$rr.subset]
+
+    surv.fit.param1 <- surv.fit.param
+    surv.fit.param2 <- surv.fit.param
+
+    surv.fit.param1$rr.subset <- surv.fit.param$rr.subset[trt.sub == grps[1]]
+    surv.fit.param2$rr.subset <- surv.fit.param$rr.subset[trt.sub == grps[2]]
+    
+    tau1 <- fitQuantile(tau=tau, data=data1, conf.level=conf.level, null.value=NULL, method=surv.fit.fun, surv.fit.param=surv.fit.param1)
+    tau2 <- fitQuantile(tau=tau, data=data2, conf.level=conf.level, null.value=NULL, method=surv.fit.fun, surv.fit.param=surv.fit.param2)
 
     ## get function object
     surv.fit.fun <- get(surv.fit.fun)
@@ -177,8 +185,8 @@ fitCompareQuantiles <- function(tau, data, conf.level=0.95, null.value=1, method
                     ratio = outer(T1s, T2s, "/"),
                     difference = outer(T1s, T2s, "-"))
         
-        x1 <- surv.fit.fun(T1s, data1, surv.fit.param)
-        x2 <- surv.fit.fun(T2s, data2, surv.fit.param)
+        x1 <- surv.fit.fun(T1s, data1, surv.fit.param1)
+        x2 <- surv.fit.fun(T2s, data2, surv.fit.param2)
         
         chi.sq1 <- stat(x1$S, x1$V / n1)
         chi.sq2 <- stat(x2$S, x2$V / n2)
@@ -191,16 +199,16 @@ fitCompareQuantiles <- function(tau, data, conf.level=0.95, null.value=1, method
     
     ## p-value
     if(p.value & !is.null(null.value)) {
-        get.surv <- function(x, data) surv.fit.fun(times=x, data=data, surv.fit.param)
+        get.surv <- function(x, data, param) surv.fit.fun(times=x, data=data, param=param)
         G <- switch(method,
                     ratio = function(x) {
-                        tmp1 <- get.surv(x, data1)
-                        tmp2 <- get.surv(null.value * x, data2)
+                        tmp1 <- get.surv(x, data1, surv.fit.param1)
+                        tmp2 <- get.surv(null.value * x, data2, surv.fit.param2)
                         stat(tmp1$S, tmp1$V / n1) + stat(tmp2$S, tmp2$V / n2)
                     },
                     difference = function(x) {
-                        tmp1 <- get.surv(x, data1)
-                        tmp2 <- get.surv(null.value + x, data2)
+                        tmp1 <- get.surv(x, data1, surv.fit.param1)
+                        tmp2 <- get.surv(null.value + x, data2, surv.fit.param2)
                         stat(tmp1$S, tmp1$V / n1) + stat(tmp2$S, tmp2$V / n2)
                     })
         ## minimum should be close to tau1$quantile
