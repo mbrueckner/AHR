@@ -13,7 +13,7 @@
 #' @return an object of class '"wkm"'
 #' @details This function calculates the weighted Kaplan-Meier estimator for the survival function with weights based on a discrete time-independent covariate as described in Murray/Tsiatis (1996).
 #' The survival probabilities are evaluated at each entry in the vector \code{times}. The data frame \code{data} must either contain the variable in \code{formula} or, if \code{formula} is \code{NULL},
-#' the variables \code{V} (left-truncation time), \code{Y} (censored failure time), \code{D} (censoring indicator), \code{W} (stratification variable) and optionally \code{R} (recruitment time).
+#' the variables \code{V} (left-truncation time), \code{Y} (censored failure time), \code{D} (censoring indicator), \code{W} (stratification variable).
 #' If \code{var} is \code{TRUE} then an estimate of the asmyptotic variance is calculated for each entry in vector \code{times}. If \code{cov} is \code{TRUE} then the \code{n x n} asymptotic
 #' covariance matrix is estimated, where \code{n} is the length of vector \code{times}. If \code{left.limit} is \code{TRUE} then a left-continuous estimate of the survival function is calculated instead
 #' of a right-continuous estimate (default). If a logical vector \code{rr.subset} is supplied, then only a subset of observations is used to estimate the response rates.
