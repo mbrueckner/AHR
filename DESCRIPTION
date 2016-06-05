@@ -21,4 +21,6 @@ Imports:
     etm,
     Rcpp
 LinkingTo: Rcpp, RcppArmadillo
+Suggests:
+    testthat
 RoxygenNote: 5.0.1
