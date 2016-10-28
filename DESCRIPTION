@@ -1,9 +1,9 @@
 Package: AHR
 Type: Package
 Title: Estimation and Testing of Average Hazard Ratios
-Version: 1.4.1
-Date: 2016-06-17
-Author: Matthias Brueckner <matthias.brueckner@posteo.de>
+Version: 1.4.2
+Date: 2016-08-28
+Author: person("Matthias", "Brueckner", email="matthias.brueckner@posteo.de", role = c("aut", "cre"))
 Maintainer: Matthias Brueckner <matthias.brueckner@posteo.de>
 Description: Methods for estimation of multivariate average hazard ratios as
     defined by Kalbfleisch and Prentice. The underlying survival functions of the
