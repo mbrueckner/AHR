@@ -10,7 +10,7 @@
 #' Furthermore estimation of quantiles, ratios and differences of quantiles and corresponding p-values and confidence intervals of
 #' survival times based on the (weighted) Kaplan-Meier estimator and the Aalen-Johansen estimator is also supported.
 #' 
-#' @author Matthias Brueckner \email{mwbr@@math.uni-bremen.de}
+#' @author Matthias Brueckner \email{matthias.brueckner@@posteo.de}
 #' @references
 #' J.~D. Kalbfleisch and R.~L. Prentice. Estimation of the average hazard ratio. \emph{Biometrika}, 68(1):105--112, Apr. 1981.
 #' 
