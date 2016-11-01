@@ -12,7 +12,7 @@ Description: Methods for estimation of multivariate average hazard ratios as
     probabilities in Markov multi-state models. Right-censored and left-truncated
     data is supported. Moreover, the difference in restricted mean survival can be
     estimated.
-License: GPL (>= 3)
+License: GPL-3 | file LICENSE
 Depends:
     survival
 Imports:
