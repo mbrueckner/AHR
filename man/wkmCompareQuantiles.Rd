@@ -39,4 +39,3 @@ wkmCompareQuantiles(0.5, Surv(Y, D) ~ Z, data.frame(Y=Y, D=D, Z=Z))
 \references{
 su_nonparametric_1993
 }
-

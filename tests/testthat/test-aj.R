@@ -19,7 +19,10 @@ test_that("Aalen-Johansen estimator reduces to Kaplan-Meier estimator for two-st
     times <- seq(0, 5, length.out=10) ##c(1.5, 3)
 
     data <- data[order(data$time),]
-  
+
+    data$to[1] <- 1
+    data$status[1] <- TRUE
+    
     ##S <- exp(-times/10)
 
     fs <- survfit(Surv(time, status) ~ 1, data=data)
@@ -37,3 +40,22 @@ test_that("Aalen-Johansen estimator reduces to Kaplan-Meier estimator for two-st
     expect_true(all.equal(f(times), f2(times)))
     expect_true(all.equal(g(times), g2(times)))
 })
+
+
+test.etm <- function(j=1) {
+    data <- data.frame(id=1:10, time=1:10, from=0, to=1, status=TRUE)
+
+    tra <- matrix(FALSE, nrow=2, ncol=2)
+    tra[1, 2] <- TRUE
+
+    data$to[j] <- "cens"
+    data$status[j] <- FALSE
+
+    fit.km <- survfit(Surv(time, status) ~ 1, data=data)
+    fit.etm <- etm(data, c("0","1"), tra, "cens", s=0, t="last", covariance=FALSE)
+
+    data.frame(time=fit.km$time[data$status],
+               km=fit.km$surv[data$status],         
+               time2=as.numeric(names(fit.etm$est[1,2,data$status])),
+               etm=1-fit.etm$est[1,2,data$status])
+}

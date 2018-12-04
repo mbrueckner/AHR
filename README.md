@@ -16,8 +16,9 @@ Get the released version from CRAN:
 install.packages("AHR")
 ```
 
-Or from github:
+Or the development version from github:
 
 ```R
 # install.packages("devtools")
 devtools::install_github("mbrueckner/AHR")
+```

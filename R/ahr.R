@@ -21,6 +21,7 @@
 avgHR <- function(L, data, method="km", ...) {
     if(method %in% c("km", "wkm")) ahrWKM(L=L, data=data, ...)
     else if(method == "aj") ahrAJ(L=L, data=data, ...)
+    else if(method == "user") ahrUser(L=L, data=data, ...)
     else stop(paste("Unknown method:", method))
 }
 
@@ -149,6 +150,57 @@ ahrAJ <- function(L, target, states, transitions, censoring, data, null.theta=NU
 
     fit <- ahrSurv(L, data, null.theta, contrast, multi.test, cov, bootstrap, aj, msm, FALSE)
 
+    fit <- c(fit, logHR(fit))
+    class(fit) <- "ahr"
+    fit
+}
+
+#' Estimate average hazard ratios from k independent samples based on the weighted Kaplan-Meier (WKM) estimator
+#'
+#' @title ahrUser
+#' @param L time-limit specifying time-interval [0,L] over which average hazard ratios will be calculated
+#' @param formula an object of class '"formula"' specifying the conditional survival model
+#' @param data data frame containing the variables in formula
+#' @param null.theta vector specifying the null hypothesis for the average hazard ratios (H_0: theta = null.theta)
+#' @param contrast vector of contrasts to test H_0: contrast * (theta - null.theta) = 0
+#' @param multi.test calculate multivariate test statistic if TRUE
+#' @param cov if TRUE calculate covariance matrix estimator (direct)
+#' @param bootstrap if > 0 then use bootstrap to estimate covariance matrix (ignore if cov is TRUE)
+#' @param user.survfit user defined function taking vector of times, data.frame and list of parameters returning survival function estimate
+#' @param user.param list of parameters passed to function user.survfit
+#' @return An object of class '"ahr"'
+#' @references J.~D. Kalbfleisch and R.~L. Prentice. Estimation of the average hazard ratio. \emph{Biometrika}, 68(1):105--112, Apr. 1981.
+#' @export
+#' @seealso \code{\link{wkm}}
+#' @details user.survfit must return logV (if user supplied survival function estimator hast independent increments property) or logCOV
+#' @examples
+#' ## User supplied survival function estimator (should be exactly the same as
+#' T <- c(rexp(100, 1), rexp(100, 2))
+#' C <- c(rexp(100, 1), rexp(100, 2))
+#' time <- pmin(T, C)
+#' status <- T <= C
+#' trt <- rep(c(0,1), c(100, 100)) # treatment indicator
+#'
+#' sfit <- function(times, data, param) {
+#'   fit <- survfit(Surv(Y, D) ~ 1, data=data)
+#'   f <- approxfun(fit$time, fit$surv, method="constant", f=0, yleft=1, rule=2)
+#'   fv <- approxfun(fit$time, fit$std.err^2, method="constant", f=0, yleft=1, rule=2)
+#'
+#'   S <- f(times)
+#'   logV <- fv(times) * nrow(data)
+#'   V <- S^2 * logV
+#' 
+#'   list(times=times, S=S, V=V, logV=logV)
+#' }
+#' fit1 <- ahrUser(2, Surv(time, status) ~ trt, data.frame(time=time, status=status, trt=trt), user.survfit=sfit, user.param=list())
+#' fit1
+#' fit2 <- ahrKM(2, Surv(time, status) ~ trt, data.frame(time=time, status=status, trt=trt), cov=FALSE)
+#' fit2
+#' 
+ahrUser <- function(L, formula, data, null.theta=NULL, contrast=NULL, multi.test=FALSE, cov=FALSE, bootstrap=0, user.survfit=wkm, user.param=list(alpha=1, var=FALSE, cov=FALSE, left.limit=FALSE, rr.subset=rep(TRUE, nrow(data)))) {
+    if(!is.null(formula)) data <- parseFormula(formula, data)    
+
+    fit <- ahrSurv(L, data, null.theta, contrast, multi.test, cov, bootstrap, user.survfit, user.param, TRUE)
     fit <- c(fit, logHR(fit))
     class(fit) <- "ahr"
     fit

@@ -1,8 +1,8 @@
 Package: AHR
 Type: Package
 Title: Estimation and Testing of Average Hazard Ratios
-Version: 1.4.2
-Date: 2016-08-28
+Version: 1.4.9
+Date: 2018-12-04
 Author: person("Matthias", "Brueckner", email="matthias.brueckner@posteo.de", role = c("aut", "cre"))
 Maintainer: Matthias Brueckner <matthias.brueckner@posteo.de>
 Description: Methods for estimation of multivariate average hazard ratios as
@@ -23,4 +23,4 @@ Imports:
 LinkingTo: Rcpp, RcppArmadillo
 Suggests:
     testthat
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

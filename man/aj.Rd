@@ -45,4 +45,3 @@ fit <- aj(sort(data$time), data, list(target="0 1", states=c("0", "1", "2"), tra
 \seealso{
 \code{\link[etm]{etm}}
 }
-

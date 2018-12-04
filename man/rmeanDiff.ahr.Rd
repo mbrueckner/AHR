@@ -37,4 +37,3 @@ Z <- rep(c(0,1), c(100, 100))
 fit <- avgHR(2, data.frame(Y=Y, D=D, Z=Z), formula=Surv(Y, D) ~ Z)
 rmd <- rmeanDiff.ahr(fit)
 }
-

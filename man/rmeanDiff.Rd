@@ -39,4 +39,3 @@ D <- T <= C
 Z <- rep(c(0,1), c(100, 100))
 fit <- rmeanDiff(2, formula=Surv(Y, D) ~ Z, data.frame(Y=Y, D=D, Z=Z))
 }
-

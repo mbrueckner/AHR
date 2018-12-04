@@ -44,4 +44,3 @@ f(fit$time)
 \seealso{
 \code{\link{survfit}} and \code{\link[prodlim]{prodlim}}
 }
-

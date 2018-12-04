@@ -37,4 +37,3 @@ wkmQuantile(0.5, Surv(Y, D) ~ strata(Z), data.frame(Y=Y, D=D, Z=Z))
 \references{
 brookmeyer_confidence_1982
 }
-

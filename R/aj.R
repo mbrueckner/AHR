@@ -77,7 +77,7 @@ aj <- function(times, data, param) {
     tmp <- strsplit(param$target, split=NULL)[[1]]
     from.to <- c(which(tmp[1] == states), which(tmp[3] == states))
 
-    F <- pmax(0, 1 - fit$est[from.to[1],from.to[2],])    
+    F <- pmax(0, 1 - fit$est[from.to[1],from.to[2],])
     S <- evalFun(times, fit$time, F)
     
     ## cum.n.risk <- rowSums(as.matrix(fit$n.risk[, tra[, from.to[2]][-from.to[2]]]))

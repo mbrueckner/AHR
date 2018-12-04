@@ -51,4 +51,3 @@ J.~D. Kalbfleisch and R.~L. Prentice. Estimation of the average hazard ratio. \e
 \seealso{
 \code{\link{survfit}}
 }
-

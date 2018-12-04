@@ -58,9 +58,6 @@ sc.fit <- avgHR(2, method="aj", data=df, target="0 2", states=c("0", "1", "2"), 
 sc.fit
 
 }
-\author{
-Matthias Brueckner \email{mwbr@math.uni-bremen.de}
-}
 \references{
 J.~D. Kalbfleisch and R.~L. Prentice. Estimation of the average hazard ratio. \emph{Biometrika}, 68(1):105--112, Apr. 1981.
 
@@ -68,4 +65,6 @@ S.~Murray and A.~A. Tsiatis. Nonparametric survival estimation using prognostic 
 
 C.~A. Struthers and J.~D. Kalbfleisch. Misspecified proportional hazard models. \emph{Biometrika}, 73(2):363--369, Aug. 1986.
 }
-
+\author{
+Matthias Brueckner \email{matthias.brueckner@posteo.de}
+}
