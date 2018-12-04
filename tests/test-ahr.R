@@ -1,12 +1,6 @@
 library(testthat)
 library(AHR)
 
-context("ahr")
-
-## TODO: test cases for step.integrate
-## TODO: test extreme cases
-## TODO: test ahrAJ
-
 test_that("AHR estimates of two-sample problem sum to 1", {
     get.data <- function(n, a, b) {       
         T <- rweibull(n, shape=b, scale=a)

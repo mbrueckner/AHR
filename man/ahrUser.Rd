@@ -5,9 +5,9 @@
 \title{ahrUser}
 \usage{
 ahrUser(L, formula, data, null.theta = NULL, contrast = NULL,
-  multi.test = FALSE, cov = FALSE, bootstrap = 0, user.survfit = wkm,
-  user.param = list(alpha = 1, var = FALSE, cov = FALSE, left.limit = FALSE,
-  rr.subset = rep(TRUE, nrow(data))))
+  multi.test = FALSE, cov = FALSE, bootstrap = 0,
+  user.survfit = wkm, user.param = list(alpha = 1, var = FALSE, cov =
+  FALSE, left.limit = FALSE, rr.subset = rep(TRUE, nrow(data))))
 }
 \arguments{
 \item{L}{time-limit specifying time-interval [0,L] over which average hazard ratios will be calculated}
@@ -34,7 +34,7 @@ ahrUser(L, formula, data, null.theta = NULL, contrast = NULL,
 An object of class '"ahr"'
 }
 \description{
-Estimate average hazard ratios from k independent samples based on the weighted Kaplan-Meier (WKM) estimator
+Estimate average hazard ratios from k independent samples based on user-supplied survival function estimator
 }
 \details{
 user.survfit must return logV (if user supplied survival function estimator hast independent increments property) or logCOV
@@ -58,7 +58,8 @@ sfit <- function(times, data, param) {
 
   list(times=times, S=S, V=V, logV=logV)
 }
-fit1 <- ahrUser(2, Surv(time, status) ~ trt, data.frame(time=time, status=status, trt=trt), user.survfit=sfit, user.param=list())
+fit1 <- ahrUser(2, Surv(time, status) ~ trt,
+                data.frame(time=time, status=status, trt=trt), user.survfit=sfit, user.param=list())
 fit1
 fit2 <- ahrKM(2, Surv(time, status) ~ trt, data.frame(time=time, status=status, trt=trt), cov=FALSE)
 fit2

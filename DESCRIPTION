@@ -1,9 +1,10 @@
 Package: AHR
 Type: Package
 Title: Estimation and Testing of Average Hazard Ratios
-Version: 1.4.9
+Version: 1.5.0
 Date: 2018-12-04
-Author: person("Matthias", "Brueckner", email="matthias.brueckner@posteo.de", role = c("aut", "cre"))
+Authors@R: person("Matthias", "Brueckner", email="matthias.brueckner@posteo.de", role = c("aut", "cre"))
+Author: Matthias Brueckner [aut, cre]
 Maintainer: Matthias Brueckner <matthias.brueckner@posteo.de>
 Description: Methods for estimation of multivariate average hazard ratios as
     defined by Kalbfleisch and Prentice. The underlying survival functions of the
@@ -23,4 +24,4 @@ Imports:
 LinkingTo: Rcpp, RcppArmadillo
 Suggests:
     testthat
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1

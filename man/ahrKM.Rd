@@ -5,7 +5,8 @@
 \title{ahrKM}
 \usage{
 ahrKM(L, formula, data, null.theta = NULL, contrast = NULL,
-  multi.test = FALSE, cov = TRUE, bootstrap = 0, left.limit = FALSE)
+  multi.test = FALSE, cov = TRUE, bootstrap = 0,
+  left.limit = FALSE)
 }
 \arguments{
 \item{L}{time-limit specifying time-interval [0,L] over which average hazard ratios will be calculated}

@@ -1,8 +1,6 @@
 library(testthat)
 library(AHR)
      
-test_check("AHR")
-
 test_that("User supplied survival function estimator is the same as built-in KM estimator", {
 T <- c(rexp(100, 1), rexp(100, 2))
 C <- c(rexp(100, 1), rexp(100, 2))

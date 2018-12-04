@@ -1,3 +1,6 @@
+library(testthat)
+library(AHR)
+	
 test_that("Aalen-Johansen estimator reduces to Kaplan-Meier estimator for two-state model without recovery", {
     test.data <- function(n) {
         T <- rexp(n, 0.1)

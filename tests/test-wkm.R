@@ -1,10 +1,5 @@
 library(testthat)
-
-context("wkm")
-
-## TODO: test extreme cases (no censoring, all obs. censored, ...)
-
-## TODO: test with data from Kalbfleisch/Prentice paper
+library(AHR)
 
 test_that("single stratum wkm estimate reduces to Kaplan-Meier estimator", {
     test.data <- function(n) {

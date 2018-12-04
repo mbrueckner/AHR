@@ -4,8 +4,8 @@
 \alias{wkmCompareQuantiles}
 \title{wkmCompareQuantiles}
 \usage{
-wkmCompareQuantiles(tau, formula, data, conf.level = 0.95, null.value = 1,
-  method = "ratio", p.value = FALSE)
+wkmCompareQuantiles(tau, formula, data, conf.level = 0.95,
+  null.value = 1, method = "ratio", p.value = FALSE)
 }
 \arguments{
 \item{tau}{number between 0 and 1 specifying the quantile}

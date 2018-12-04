@@ -155,7 +155,7 @@ ahrAJ <- function(L, target, states, transitions, censoring, data, null.theta=NU
     fit
 }
 
-#' Estimate average hazard ratios from k independent samples based on the weighted Kaplan-Meier (WKM) estimator
+#' Estimate average hazard ratios from k independent samples based on user-supplied survival function estimator
 #'
 #' @title ahrUser
 #' @param L time-limit specifying time-interval [0,L] over which average hazard ratios will be calculated
@@ -192,7 +192,8 @@ ahrAJ <- function(L, target, states, transitions, censoring, data, null.theta=NU
 #' 
 #'   list(times=times, S=S, V=V, logV=logV)
 #' }
-#' fit1 <- ahrUser(2, Surv(time, status) ~ trt, data.frame(time=time, status=status, trt=trt), user.survfit=sfit, user.param=list())
+#' fit1 <- ahrUser(2, Surv(time, status) ~ trt,
+#'                 data.frame(time=time, status=status, trt=trt), user.survfit=sfit, user.param=list())
 #' fit1
 #' fit2 <- ahrKM(2, Surv(time, status) ~ trt, data.frame(time=time, status=status, trt=trt), cov=FALSE)
 #' fit2
